@@ -2,12 +2,14 @@ import React, { useContext } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { RiHomeSmileLine } from "react-icons/ri";
 import { FaUserSecret } from "react-icons/fa6";
-import { MdOutlineBookmarkAdded, MdOutlineNotificationAdd } from "react-icons/md";
+import {  MdOutlineNotificationAdd } from "react-icons/md";
 import { SlUserFollow } from "react-icons/sl";
 import { BsFillPostcardHeartFill } from "react-icons/bs";
 
 import { AuthContext } from '../Context/AuthContext';
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, NavbarContent, Spinner } from '@heroui/react';
+import {  Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
+import { notiUnreadCount } from '../pages/Notification/Notification';
 
 export default function Navbar() {
  const navigate = useNavigate()
@@ -17,11 +19,15 @@ export default function Navbar() {
     setIslogin(null)
     navigate('/login', { replace: true });
   }
+  const {data}=useQuery({
+    queryKey:['getNotiUnreadCount'],
+    queryFn:notiUnreadCount
+  })
   return (
  <aside className="bg-[#101622] text-white font-bold w-1/4 flex-col hidden lg:flex sticky top-0 h-screen border-r border-slate-200  px-4 py-6">
   <div className="flex items-center gap-3 mb-10 px-4">
-    <div className="bg-primary size-10 rounded-xl flex items-center justify-center text-white">
-      
+    <div className="bg-primary size-10 rounded-xl flex items-center justify-center text-white overflow-hidden">
+      <img src="/public/logo.png" alt="Vibe Logo" className='w-full h-full object-cover' />
     </div>
     <h2 className="text-xl font-bold tracking-tight">VIBE</h2>
   </div>
@@ -41,7 +47,7 @@ export default function Navbar() {
     <NavLink to={"/notification"} className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-100 hover:text-primary  transition-colors group relative">
       <MdOutlineNotificationAdd className=' text-2xl'/>
       <span >Notifications</span>
-      <span className="absolute right-4 bg-primary text-white text-[10px] size-5 hover:text-primary flex items-center justify-center rounded-full font-bold">3</span>
+      <span className="absolute right-4 bg-primary text-white text-[10px] size-5 hover:text-primary flex items-center justify-center rounded-full font-bold">{data?.data?.data.unreadCount}</span>
     </NavLink>
       <NavLink to={"/suggestions"} className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-100 hover:text-primary  transition-colors group relative">
       <SlUserFollow  className=' text-2xl'/>

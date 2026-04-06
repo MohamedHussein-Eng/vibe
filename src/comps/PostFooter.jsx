@@ -53,7 +53,7 @@ export default function PostFooter(props) {
     {
       mutationFn: save_un,
       onSuccess: (req) => {
-        console.log(req);
+      
         
         queryClient.invalidateQueries({ queryKey: ["GetALLPosts"] });
         queryClient.invalidateQueries({ queryKey: ["feedHome"] });

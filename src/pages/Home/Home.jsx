@@ -10,7 +10,7 @@ import SuggestedPeople from '../../comps/SuggestedPeople';
 
 // 2. Accept pageParam and inject it into the API URL
 const getAllPosts = ({ pageParam = 1 }) => {
-  return axios.get(`${baseUrl}/posts?page=${pageParam}`, { 
+  return axios.get(`${baseUrl}/posts?page=${pageParam}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`
     }
@@ -19,9 +19,9 @@ const getAllPosts = ({ pageParam = 1 }) => {
 
 export default function Home() {
   // 3. Setup useInfiniteQuery
-  const { 
-    data, 
-    isLoading, 
+  const {
+    data,
+    isLoading,
     isError,
     fetchNextPage,
     hasNextPage,
@@ -42,52 +42,38 @@ export default function Home() {
 
 
   if (isLoading) return <LoaderHome />;
-  
+
   if (isError) {
     console.error("Error fetching posts");
     return <div className="text-white text-center py-10">Failed to load posts. Please try again.</div>;
   }
 
-  console.log(data?.pages);
   
   return (
     <div className="bg-[#101622] py-10">
       <CreatePost />
       <div className="lg:flex min-h-screen">
         <div className="space-y-5 py-10 w-full">
-          
+
           {data?.pages.map((page, pageIndex) => (
             <React.Fragment key={`page-${pageIndex}`}>
               {page?.data?.data?.posts?.map((post) => (
-                
-                
-                // post.isShare?<><p>This Post shared Go To details</p> <Link to={"/details/"+post._id} ><Button>Details</Button></Link></> :
-                <PostCard 
+                <PostCard
                   key={post._id || post.id}
-                  posts={post} 
-                  id={post.user._id}
-                  body={post.body}
-                  image={post.image ?? ""}
-                  userPhoto={post.user.photo} 
-                  name={post.user.name} 
-                  userName={post.user.username}
-                  commentCount={post.commentsCount ?? 0}
-                  shareCount={post.sharesCount ?? 0}
-                  likesCount={post.likesCount ?? 0}
+                  postData={post} 
+                  isDetailsView={false}
                 />
               ))}
             </React.Fragment>
           ))}
 
-          {/* Show a message if there are no posts at all */}
           {data?.pages[0]?.data?.data?.posts?.length === 0 && (
             <p className="text-center text-slate-400">No posts available.</p>
           )}
 
-          {/* 5. The Load More Button */}
           {hasNextPage && (
             <div className="flex justify-center mt-6">
-              <button 
+              <button
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-full font-bold transition-colors disabled:opacity-50"
@@ -98,7 +84,7 @@ export default function Home() {
           )}
 
         </div>
-        
+
         <SuggestedPeople />
       </div>
     </div>

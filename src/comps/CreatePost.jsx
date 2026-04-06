@@ -1,19 +1,16 @@
 import axios from 'axios';
 import React, { useContext, useState } from 'react'
 import { BiSolidImageAdd } from "react-icons/bi";
-import { FaIcons } from "react-icons/fa";
 import { baseUrl } from '../MainData';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MdCancel } from "react-icons/md";
 import { AuthContext } from '../Context/AuthContext';
 import toast from 'react-hot-toast';
-import { MyEmojiPicker } from './Emojes';
 
 
 export default function CreatePost() {
   const { userData } = useContext(AuthContext)
   const queryClient = useQueryClient();
-  const [openEmojies, setOpenEmojies] = useState(false)
   const [postbody, setPostBody] = useState('');
   const [postImage, setPostImage] = useState(null);
   const [image, setImage] = useState(null)
@@ -97,14 +94,10 @@ export default function CreatePost() {
                 <BiSolidImageAdd />
               </label>
 
-              <button onClick={() => { setOpenEmojies(!openEmojies) }} className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors">
-                <FaIcons />
-              </button>
+            
 
             </div>
-            {openEmojies &&
-              <MyEmojiPicker />
-            }
+          
             <button
               className="bg-primary hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full text-sm transition-colors disabled:opacity-50"
               onClick={() => mutate()}

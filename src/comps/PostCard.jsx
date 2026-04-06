@@ -1,152 +1,125 @@
 import React, { useContext, useState } from 'react';
 import { Card, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
-
-
-import PostHeader from './postHeader';
-import PostBody from './PostBody';
-import PostFooter from './PostFooter';
-import Comments from './Comments';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { baseUrl } from '../MainData';
-import { AuthContext } from '../Context/AuthContext';
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-export default function PostCard(props) {
-  const { body, image, name, id, userName, userPhoto, commentCount, likesCount, shareCount, posts, details } = props;
+import { baseUrl } from '../MainData';
+import { AuthContext } from '../Context/AuthContext';
+import PostHeader from './postHeader';
+import PostBody from './PostBody';
+import PostFooter from './PostFooter';
+import Comments from './Comments';
+
+export default function PostCard({ postData, isDetailsView = false }) {
   const queryClient = useQueryClient();
-  const { userData } = useContext(AuthContext);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+  const { userData: { _id: myId } } = useContext(AuthContext);
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editBody, setEditBody] = useState(body || "");
+  const [editBody, setEditBody] = useState(postData.body || "");
 
-  const  { mutate: deletePost, isPending: isDeleting  } = useMutation({
-    mutationFn: (postId) => {
-      return axios.delete(`${baseUrl}/posts/${postId}`, {
-        headers: {
-          "token": localStorage.getItem("token")
-        }
-      });
-    },
-    onSuccess: (req) => {
-      
-      queryClient.invalidateQueries({ queryKey: ["GetALLPosts"] });
-      queryClient.invalidateQueries({ queryKey: ["feedHome"] }); 
-            toast.success(req?.data?.message)
 
-        details&&navigate('/')
+  const { _id, user, body, image, commentsCount, likesCount, sharesCount, isShare, sharedPost } = postData;
+
+  // --- Mutations ---
+  const { mutate: deletePost, isPending: isDeleting } = useMutation({
+    mutationFn: () => axios.delete(`${baseUrl}/posts/${_id}`, {
+      headers: { "token": localStorage.getItem("token") }
+    }),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(["GetALLPosts"]);
+      toast.success(res?.data?.message || "Post deleted");
+      if (isDetailsView) navigate('/');
     },
   });
 
-  
-  
   const { mutate: updatePost, isPending: isUpdating } = useMutation({
-    mutationFn: (newText) => {
-      return axios.put(`${baseUrl}/posts/${posts._id}`, 
-        { body: newText },
-        {
-          headers: {
-            "token": localStorage.getItem("token")
-          }
-        }
-      );
-    },
-    onSuccess: (req) => {
-      queryClient.invalidateQueries({ queryKey: ["GetALLPosts"] });
-      queryClient.invalidateQueries({ queryKey: ["feedHome"] });
-      queryClient.invalidateQueries({queryKey: ['getSinglePost']})
-      setIsEditing(false); 
-                  toast.success(req?.data?.message)
-
-      
+    mutationFn: (newText) => axios.put(`${baseUrl}/posts/${_id}`, { body: newText }, {
+      headers: { "token": localStorage.getItem("token") }
+    }),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(["GetALLPosts"]);
+      setIsEditing(false);
+      toast.success(res?.data?.message || "Post updated");
     },
   });
-
-  const handleSaveEdit = () => {
-    updatePost(editBody);
-  };
 
 
   return (
-    <>
-      {body || image ? (
-        <Card className="py-4 w-3/4 mx-auto h-auto bg-[#101622] border border-slate-200 mb-5">
-          <div className='flex justify-between'>
-               <PostHeader name={name} userName={userName} userPhoto={userPhoto} id={id} />
-                 {userData._id === id && !isEditing && (
-           
-            <div className="flex justify-end gap-4 px-4 pt-2  mt-2  ">
-        
-         <Popover placement="right" >
-      <PopoverTrigger className='text-white '>
-        <HiOutlineDotsVertical />
+    <Card className="py-4 w-full md:w-3/4 mx-auto bg-[#101622] border border-slate-800 mb-5 shadow-xl">
 
-      </PopoverTrigger>
-      <PopoverContent>
-        <div className="px-1 py-2 flex flex-col gap-3">
-          <button
-                onClick={() => setIsEditing(true)}
-                className="text-blue-500 font-bold text-sm hover:underline"
-              >
-                Edit Post
-              </button>
-              
-              <button
-                onClick={() => deletePost(posts._id)}
-                disabled={isDeleting}
-                className="text-danger font-bold text-sm hover:underline"
-              >
-                {isDeleting ? "Deleting..." : "Delete Post"}
-              </button>
+      {isShare && (
+        <div className="px-4 pb-2 text-slate-400 text-sm italic">
+          Shared a post from <span className="text-blue-400">@{sharedPost?.user.name}</span>
         </div>
-      </PopoverContent>
-    </Popover>
-        
-              
-            </div>
-          )}
-          </div>
+      )}
 
-
-          {isEditing ? (
-            <div className="px-4 py-3">
-              <textarea
-                value={editBody}
-                onChange={(e) => setEditBody(e.target.value)}
-                className="w-full p-3 bg-slate-800 text-white rounded-lg border border-slate-600 focus:outline-none focus:border-blue-500 mb-2"
-                rows="3"
-                placeholder="What's on your mind?"
-              />
-              <div className="flex justify-end gap-3">
-                <button 
-                  onClick={() => setIsEditing(false)} 
-                  disabled={isUpdating}
-                  className="text-slate-400 font-bold text-sm hover:text-white"
-                >
-                  Cancel
+      <div className='flex justify-between items-start px-4'>
+        <PostHeader
+          name={user.name}
+          userName={user.username}
+          userPhoto={user.photo}
+          id={user._id}
+        />
+        {/* check if this your Post */}
+        {myId === user._id && !isEditing && (
+          <Popover placement="bottom-end">
+            <PopoverTrigger className='text-white '>
+              <HiOutlineDotsVertical />
+            </PopoverTrigger>
+            <PopoverContent className="bg-slate-900 border border-slate-700">
+              <div className="px-1 py-2 flex flex-col gap-2">
+                <button onClick={() => setIsEditing(true)} className="text-blue-400 text-left font-semibold text-sm hover:bg-slate-800 p-2 rounded">
+                  Edit Post
                 </button>
-                <button 
-                  onClick={handleSaveEdit} 
-                  disabled={isUpdating}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-full font-bold text-sm transition-colors disabled:opacity-50"
-                >
-                  {isUpdating ? "Saving..." : "Save"}
+                <button onClick={() => deletePost()} disabled={isDeleting} className="text-red-500 text-left font-semibold text-sm hover:bg-slate-800 p-2 rounded">
+                  {isDeleting ? "Deleting..." : "Delete Post"}
                 </button>
               </div>
+            </PopoverContent>
+          </Popover>
+        )}
+      </div>
+
+      {/* 3. Body / Edit Mode */}
+      <div className="mt-3">
+        {isEditing ? (
+          <div className="px-4">
+            <textarea
+              value={editBody}
+              onChange={(e) => setEditBody(e.target.value)}
+              className="w-full p-3 bg-slate-900 text-white rounded-lg border border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
+              rows="3"
+            />
+            <div className="flex justify-end gap-3 mt-2">
+              <button onClick={() => setIsEditing(false)} className="text-slate-400 text-sm">Cancel</button>
+              <button
+                onClick={() => updatePost(editBody)}
+                disabled={isUpdating}
+                className="bg-blue-600 px-4 py-1 rounded-full text-sm font-bold disabled:opacity-50"
+              >
+                {isUpdating ? "Saving..." : "Save"}
+              </button>
             </div>
-          ) : (
-            <PostBody body={body} image={image} />
-          )}
+          </div>
+        ) : (
+          <PostBody body={body} image={image} isShare={isShare??null} postShareData={sharedPost??null} />
+        )}
+      </div>
 
-          <PostFooter likesCount={likesCount} shareCount={shareCount} commentCount={commentCount} id={posts._id} />
-          
+      {/* 4. Footer & Interactions */}
+      <PostFooter
+        likesCount={likesCount}
+        shareCount={sharesCount}
+        commentCount={commentsCount}
+        id={_id}
+      />
 
-         
-          {details && <Comments id={posts._id} />}
-        </Card>
-      ) : null}
-    </>
+      {/* 5. Nested Comments for Details View */}
+      {isDetailsView && <Comments id={_id} />}
+    </Card>
   );
 }

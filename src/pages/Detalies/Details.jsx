@@ -32,21 +32,12 @@ const {data,isError,isFetching}=useQuery({
   if(isError) return "Error"
   return (
     <div className='my-10'>
-      {/* {data?.data?.data.post.isShare?
-       <PostShareCard data={data}></PostShareCard>: */}
-      <PostCard key={data?.data?.data.post.id} posts={data?.data?.data.post} 
-                body={data?.data?.data.post.body}
-                image={data?.data?.data.post.image??"" }
-                 userPhoto={data?.data?.data.post.user.phote}
-                  name={data?.data?.data.post.user.name} 
-                  userName={data?.data?.data.post.user.username}
-                   commentCount={data?.data?.data.post.commentsCount??0}
-                    shareCount={data?.data?.data.post.sharesCount}
-                     likesCount={data?.data?.data.post.likesCount}
-                     id={data?.data?.data.post.user._id}
-                     details={true}
-                     ></PostCard> 
-                     
+      
+                      <PostCard
+                  key={data?.data?.data.post.id}
+                  postData={data?.data?.data.post} 
+                  isDetailsView={true}
+                />
      
       </div>
   )
