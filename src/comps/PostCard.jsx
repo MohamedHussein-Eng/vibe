@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 import { baseUrl } from '../MainData';
 import { AuthContext } from '../Context/AuthContext';
-import PostHeader from './postHeader';
+import PostHeader from './PostHeader';
 import PostBody from './PostBody';
 import PostFooter from './PostFooter';
 import Comments from './Comments';
