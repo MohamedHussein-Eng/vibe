@@ -8,10 +8,10 @@ import toast from 'react-hot-toast';
 
 import { baseUrl } from '../MainData';
 import { AuthContext } from '../Context/AuthContext';
-import PostHeader from './PostHeader';
 import PostBody from './PostBody';
 import PostFooter from './PostFooter';
 import Comments from './Comments';
+import PostHeader from './PostHedaer';
 
 export default function PostCard({ postData, isDetailsView = false }) {
   const queryClient = useQueryClient();
