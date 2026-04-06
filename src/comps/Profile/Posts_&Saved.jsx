@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import post_image from '../../images/postimage.png'
-import { Spinner } from '@heroui/react'
+import post_image from '../../images/PostImage.png'
 
 export default function MyPostsSaved({ posts, savedPosts, profile }) {
   const [activeFilter, setActiveFilter] = useState('posts')
