@@ -106,7 +106,7 @@ export default function PostCard({ postData, isDetailsView = false }) {
             </div>
           </div>
         ) : (
-          <PostBody body={body} image={image} isShare={isShare??null} postShareData={sharedPost??null} />
+          <PostBody body={body} image={image} isShare={isShare ?? null} postShareData={sharedPost ?? null} />
         )}
       </div>
 
