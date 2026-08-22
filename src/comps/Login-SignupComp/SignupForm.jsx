@@ -31,7 +31,10 @@ const schema = z.object({
     .refine((data) => new Date(data) < new Date(), {
       message: "Date of birth must be in the past"
     }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/, "This Invalid Formate for Password Should Contain At Least 8 Characters, One Uppercase, One Lowercase, One Number and One Special Character"),
   rePassword: z.string().min(1, { message: "Please confirm your password." })
 }).refine((data) => data.password === data.rePassword, {
   message: "Passwords do not match.",
@@ -43,9 +46,9 @@ const schema = z.object({
 const SignupForm = () => {
   const navigate = useNavigate();
   const [loading, setLoding] = useState(false)
-    const{setIslogin}=useContext(AuthContext)
-  
-  
+  const { setIslogin } = useContext(AuthContext)
+
+
 
   // Setup React Hook Form
   const {
@@ -74,7 +77,7 @@ const SignupForm = () => {
         localStorage.setItem("token", req.data?.data.token);
         setIslogin(req.data?.data.token)
         toast.success(req.data?.message);
-        navigate('/' ,{relative:true});
+        navigate('/', { relative: true });
       })
       .catch((err) => {
         toast.error(err.response?.data?.message || "Something went wrong.");

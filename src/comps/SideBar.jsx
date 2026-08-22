@@ -11,6 +11,8 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '
 import { useQuery } from '@tanstack/react-query';
 import { notiUnreadCount } from '../utils/notificationAPI';
 
+import logo from '../../public/logo.png'
+
 export default function Navbar() {
   const navigate = useNavigate()
   const { userData, setIslogin, isLoading } = useContext(AuthContext)
@@ -35,7 +37,7 @@ export default function Navbar() {
     <aside className="bg-[#101622] text-white font-bold w-1/4 flex-col hidden lg:flex sticky top-0 h-screen border-r border-slate-200  px-4 py-6">
       <div className="flex items-center gap-3 mb-10 px-4">
         <div className="bg-primary size-10 rounded-xl flex items-center justify-center text-white overflow-hidden">
-          <img src="/public/logo.png" alt="Vibe Logo" className='w-full h-full object-cover' />
+          <img src={logo} alt="Vibe Logo" className='w-full h-full object-cover' />
         </div>
         <h2 className="text-xl font-bold tracking-tight">VIBE</h2>
       </div>

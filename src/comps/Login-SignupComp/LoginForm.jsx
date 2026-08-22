@@ -20,7 +20,7 @@ import { AuthContext } from '../../Context/AuthContext';
 
 export default function LoginForm() {
 
-  const{setIslogin}=useContext(AuthContext)
+  const { setIslogin } = useContext(AuthContext)
   const [loading, setLoding] = useState(false)
   const navigate = useNavigate()
   // 1. Define the schema
@@ -51,20 +51,21 @@ export default function LoginForm() {
     setLoding(true)
     axios.post(`${baseUrl}/users/signin`, data)
       .then((req) => {
-        
-        
-          localStorage.setItem("token",req.data?.data.token)
-          setIslogin(localStorage.getItem("token"))
-       
-         navigate('/'); 
+
+
+        localStorage.setItem("token", req.data?.data.token)
+        setIslogin(localStorage.getItem("token"))
+
+        navigate('/');
       })
       .catch((err) => {
 
-        toast.error(err.response.data.message)
+        toast.error(err?.response?.data.message)
       })
-      .finally(() => { setLoding(false)
-        
-       })
+      .finally(() => {
+        setLoding(false)
+
+      })
 
 
 
@@ -105,9 +106,9 @@ export default function LoginForm() {
               {...register("email")}
             />
           </div>
-        {errors.email&&
+          {errors.email &&
             <p className=' text-sm text-red-600'>{errors.email?.message}</p>
-        }
+          }
           <button type="button" className=" mb-2 block text-sm font-semibold text-primary transition hover:underline">
             Forgot password?
           </button>
@@ -125,11 +126,11 @@ export default function LoginForm() {
               {...register("password")}
             />
           </div>
-            {errors.password&&
+          {errors.password &&
             <p className='text-sm text-red-600'>{errors.password?.message}</p>
-            }
+          }
 
-         
+
           {/* Action Buttons */}
           {loading ?
             <Tooltip content="wait I Send Your Request!!" color="primary">
