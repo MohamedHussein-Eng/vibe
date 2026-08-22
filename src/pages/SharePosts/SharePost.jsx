@@ -18,8 +18,8 @@ export default function SharePost() {
     // 2. State to hold the user's input
     const [comment, setComment] = useState("");
 
-    const { data, isLoading } = useQuery({
-        queryKey: ["getSinglePost", id], 
+    const { data } = useQuery({
+        queryKey: ["getSinglePost", id],
         queryFn: () => fetchSinglePost(id),
     });
 

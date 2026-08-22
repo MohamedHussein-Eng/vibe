@@ -1,8 +1,6 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../../Context/AuthContext'
+import React from 'react'
 import axios from 'axios'
 import { baseUrl } from '../../MainData'
-
 
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@heroui/react'

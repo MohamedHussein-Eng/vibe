@@ -13,7 +13,7 @@ import PostFooter from './PostFooter';
 import Comments from './Comments';
 import PostHeader from './PostHedaer';
 
-export default function PostCard({ postData, isDetailsView = false }) {
+export default function PostCard({ postData, isDetailsView = false, isLiked: propIsLiked }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { userData: { _id: myId } } = useContext(AuthContext);
@@ -21,8 +21,9 @@ export default function PostCard({ postData, isDetailsView = false }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(postData.body || "");
 
-
-  const { _id, user, body, image, commentsCount, likesCount, sharesCount, isShare, sharedPost } = postData;
+  // Support both: isLiked from postData (Home/Details) or direct prop (Feed)
+  const { _id, user, body, image, commentsCount, likesCount, sharesCount, isShare, sharedPost, isLiked = false } = postData;
+  const finalIsLiked = propIsLiked ?? isLiked;
 
   // --- Mutations ---
   const { mutate: deletePost, isPending: isDeleting } = useMutation({
@@ -116,6 +117,7 @@ export default function PostCard({ postData, isDetailsView = false }) {
         shareCount={sharesCount}
         commentCount={commentsCount}
         id={_id}
+        isLiked={finalIsLiked}
       />
 
       {/* 5. Nested Comments for Details View */}

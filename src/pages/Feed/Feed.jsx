@@ -45,18 +45,10 @@ export default function Feed() {
         {data?.pages.map((page, pageIndex) => (
           <React.Fragment key={`page-${pageIndex}`}>
             {page?.data?.data?.posts?.map((post) => (
-              <PostCard 
-                key={post._id || post.id} 
-                posts={post} 
-                id={post.user._id}
-                body={post.body}
-                image={post.image ?? ""}
-                userPhoto={post.user.photo} 
-                name={post.user.name} 
-                userName={post.user.username}
-                commentCount={post.commentsCount ?? 0}
-                shareCount={post.sharesCount ?? 0}
-                likesCount={post.likesCount ?? 0}
+              <PostCard
+                key={post._id || post.id}
+                postData={post}
+                isLiked={post.isLiked ?? false}
               />
             ))}
           </React.Fragment>
