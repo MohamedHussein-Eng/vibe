@@ -11,7 +11,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '
 import { useQuery } from '@tanstack/react-query';
 import { notiUnreadCount } from '../utils/notificationAPI';
 
-import logo from '../../public/logo.png'
+import logo from '../../public/Logo.png'
 
 export default function Navbar() {
   const navigate = useNavigate()
